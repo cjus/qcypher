@@ -9,9 +9,9 @@
       "email": "carlos.justiniano@gmail.com"
     }
   ],
-  "main": "./lib/Neo4jApi.js",
+  "main": "./lib/index.js",
   "scripts": {
-    "test": "mocha"
+    "test": "jasmine-node spec"
   },
   "repository": {
     "type": "git",
@@ -23,21 +23,21 @@
     "request": "~2.34.0"
   },
   "devDependencies": {
-    "mocha": "*",
-    "chai": "*"
   },
   "keywords": [
     "neo4j",
     "rest",
     "q",
-    "promise"
+    "promise",
     "api",
     "graph",
+    "graphdb",
+    "nosql",
     "database",
     "asynchronous"
   ],
   "analyze": false,
-  "license": "GPL3",
+  "license": "MIT",
   "engines": {
     "node": ">=0.8"
   }
