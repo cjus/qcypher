@@ -1,8 +1,6 @@
 var qcypher = require('../lib/index')
   , q = require('q');
 
-jasmine.getEnv().defaultTimeoutInterval = 2000;
-
 describe('#Simple Query Suite', function() {
   'use strict';
 
@@ -12,17 +10,33 @@ describe('#Simple Query Suite', function() {
     done();
   });
 
-  describe('Connect to neo4j', function() {
+  describe('Clear database', function() {
+    it('should return node', function(done) {
+      qcypher.query('MATCH (n) OPTIONAL MATCH (n)-[r]-() DELETE n, r', {})
+        .then(function(result) {
+          expect(result).toBeDefined();
+          done();
+        })
+        .catch(function(result) {
+          console.log('result', result);
+          done();
+        });
+    });
+  });
 
+  describe('Connect to neo4j', function() {
     it('create node should return node', function(done) {
       qcypher.query('MERGE (n:QCypher {name: "first"}) RETURN n', {})
         .then(function(result) {
           var data = result.data[0][0].data;
           expect(data.name).toBe('first');
           done();
+        })
+        .catch(function(result) {
+          console.log('result', result);
+          done();
         });
     });
-
   });
 });
 

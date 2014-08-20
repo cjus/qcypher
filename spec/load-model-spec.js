@@ -1,11 +1,9 @@
 var qcypher = require('../lib/index')
   , q = require('q');
 
-jasmine.getEnv().defaultTimeoutInterval = 2000;
-
 var model = ['CREATE',
-  '(c1:Cue {text:"Good morning. Whatsay?"})',
-  '(c2:Cue {text:"My breakfast plate. Whatsay?"}),',
+  '(c1:Cue {text:"Under 20"}),',
+  '(c2:Cue {text:"Over 20"}),',
   '(cat1:Category {name:"noting"}),',
   '(c1)<-[:HAS]-(cat1),',
   '(c2)<-[:HAS]-(cat1),',
@@ -37,11 +35,17 @@ var model = ['CREATE',
   '(c2)-[:HAS]->(a11),',
   '(a8)-[:HAS]->(a12),',
   '(a8)-[:HAS]->(a13)',
-  'WITH c1'
-].join(' ');
+  'RETURN c1'
+].join(' \n');
 
+var query = [
+  'MATCH (cat:Category {name:{data}.name})-[:HAS]->(cue:Cue)',
+  'OPTIONAL MATCH (cat)-[:HAS]->(cue)-[:HAS]-(background:Background)',
+  'OPTIONAL MATCH (cat)-[:HAS]->(cue)-[:HAS]-(background)-[:HAS]-(sticker:Sticker)',
+  'RETURN DISTINCT cue.text, ID(cue), background.id, sticker.id'
+].join(' \n');
 
-describe('#Simple Query Suite', function() {
+describe('#load-model Suite', function() {
   'use strict';
 
   beforeEach(function(done) {
@@ -50,17 +54,55 @@ describe('#Simple Query Suite', function() {
     done();
   });
 
-  describe('Connect to neo4j', function() {
-
-    it('create node should return node', function(done) {
-      qcypher.query('MERGE (n:QCypher {name: "first"}) RETURN n', {})
+  describe('Clear database', function() {
+    it('should return node', function(done) {
+      qcypher.query('MATCH (n) OPTIONAL MATCH (n)-[r]-() DELETE n, r', {})
         .then(function(result) {
-          var data = result.data[0][0].data;
-          expect(data.name).toBe('first');
+          expect(result).toBeDefined();
+          done();
+        })
+        .catch(function(result) {
+          console.log('result', result);
           done();
         });
     });
-
   });
+
+  describe('Upload model', function() {
+    it('should return node', function(done) {
+      qcypher.query(model, {})
+        .then(function(result) {
+          var data = result.data[0][0].data;
+          expect(data.text).toBe('Under 20');
+          done();
+        })
+        .catch(function(result) {
+          console.log('result', result);
+          done();
+        });
+    });
+  });
+
+  describe('Query model', function() {
+    it('should return valid object', function(done) {
+      qcypher.query(query, {
+        data: {
+          name: "noting"
+        }
+      })
+        .then(function(result) {
+          expect(result.data[0][2]).toBe('ebe158e6-f79d-4501-8d53-ad107fb30496');
+          expect(result.data.length).toBe(13);
+          done();
+        })
+        .catch(function(result) {
+          console.log('result', result);
+          expect('exception').toBe(false);
+          done();
+        });
+    });
+  });
+
+
 });
 
