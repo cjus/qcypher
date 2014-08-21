@@ -48,7 +48,7 @@ var query = [
 describe('#load-model Suite', function() {
   'use strict';
 
-  var graphDatabaseUrl = (process.env.GRAPHENEDB_URL) ? process.env.GRAPHENEDB_URL : 'http://localhost:7474';
+  var graphDatabaseUrl = process.env.GRAPHENEDB_URL || 'http://localhost:7474';
   qcypher.init(graphDatabaseUrl);
 
   describe('Clear database', function() {

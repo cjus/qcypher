@@ -4,7 +4,7 @@ var qcypher = require('../lib/index')
 describe('#Simple Query Suite', function() {
   'use strict';
 
-  var graphDatabaseUrl = (process.env.GRAPHENEDB_URL) ? process.env.GRAPHENEDB_URL : 'http://localhost:7474';
+  var graphDatabaseUrl = process.env.GRAPHENEDB_URL || 'http://localhost:7474';
   qcypher.init(graphDatabaseUrl);
 
   describe('Clear database', function() {

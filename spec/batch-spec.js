@@ -11,7 +11,7 @@ var query = [
 describe('batch Suite', function() {
   'use strict';
   var queryListObject;
-  var graphDatabaseUrl = (process.env.GRAPHENEDB_URL) ? process.env.GRAPHENEDB_URL : 'http://localhost:7474';
+  var graphDatabaseUrl = process.env.GRAPHENEDB_URL || 'http://localhost:7474';
   qcypher.init(graphDatabaseUrl);
 
   describe('Clear database', function() {
