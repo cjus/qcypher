@@ -1,6 +1,6 @@
 # qcypher
 
-A [q/promise-based](http://documentup.com/kriskowal/q) pure JS library for working with [Neo4j])http://www.neo4j.org)
+A [q/promise-based](http://documentup.com/kriskowal/q) pure JS library for working with [Neo4j](http://www.neo4j.org)
 
 QCypher uses the Neo4j REST endpoints to issue HTTP requests to the graph database.  Asynchronous queries return Q promises in order to support query chaining.
 
