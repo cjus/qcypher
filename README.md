@@ -18,7 +18,7 @@ When querying a local database the qcypher.init() call is optional, but using it
 
 Queries are written in the [Cypher query language](http://www.neo4j.org/learn/cypher) to interact with the graph.
 
-```
+```javascript
   var qcypher = require('qcypher')
     , q = require('q');
 
@@ -33,7 +33,7 @@ Queries are written in the [Cypher query language](http://www.neo4j.org/learn/cy
 
 To retrieve data from the graph:
 
-```
+```javascript
   qcypher.query("MATCH (s:Student {name:{student}.name}) RETURN s", {
     student: {
       name: "Scott Riggs"
