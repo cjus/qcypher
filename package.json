@@ -1,6 +1,6 @@
 {
   "name": "qcypher",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "author": "Carlos Justiniano <carlos.justiniano@gmail.com>",
   "description": "A q/promise based pure JS library for working with Neo4j.",
   "contributors": [
