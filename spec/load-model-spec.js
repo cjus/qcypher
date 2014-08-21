@@ -48,14 +48,11 @@ var query = [
 describe('#load-model Suite', function() {
   'use strict';
 
-  beforeEach(function(done) {
-    var graphDatabaseUrl = (process.env.GRAPHENEDB_URL) ? process.env.GRAPHENEDB_URL : 'http://localhost:7474';
-    qcypher.init(graphDatabaseUrl);
-    done();
-  });
+  var graphDatabaseUrl = (process.env.GRAPHENEDB_URL) ? process.env.GRAPHENEDB_URL : 'http://localhost:7474';
+  qcypher.init(graphDatabaseUrl);
 
   describe('Clear database', function() {
-    it('should return node', function(done) {
+    it('should succeed', function(done) {
       qcypher.query('MATCH (n) OPTIONAL MATCH (n)-[r]-() DELETE n, r', {})
         .then(function(result) {
           expect(result).toBeDefined();
