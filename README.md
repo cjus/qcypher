@@ -1,4 +1,4 @@
-# qcypher
+# QCypher
 
 A [q/promise-based](http://documentup.com/kriskowal/q) pure JS library for working with [Neo4j](http://www.neo4j.org)
 
