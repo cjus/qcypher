@@ -2,6 +2,9 @@
 
 A q/promises based pure JS library for working with Neo4j
 
+## Install via NPM
+
+    $ npm install qcypher
 
 ## Tests
 qcypher has a suite of tests in the `/spec` folder. In order to run the tests neo4j must be running and jasmine-node must be installed.
