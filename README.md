@@ -8,7 +8,7 @@ qcypher has a suite of tests in the `/spec` folder. In order to run the tests ne
     
 Requires jasmine-node to be installed globally. If you don't have it installed run:
 
-    $ npm install jasmine-node -g
+    $ npm install -g jasmine-node
     
 Run the tests using:
 
