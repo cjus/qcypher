@@ -45,6 +45,8 @@ To retrieve data from the graph:
     })
 ```
 
+![image](./images/student_graph_db.png)
+
 ### Handling query errors
 The following query is syntactically invalid and will cause Neo4j to return an error containing an exception and stack trace. This is valuable in helping you determine the cause of your error.
 
@@ -93,8 +95,6 @@ Here we see clues to the cause of the problem. Note, that the information return
 ```
 
 View the jasmine-node tests for other examples.
-
-![image](./images/student_graph_db.png)
 
 ## Tests
 QCypher has a suite of tests in the `/spec` folder. In order to run the tests neo4j must be running and jasmine-node must be installed.
