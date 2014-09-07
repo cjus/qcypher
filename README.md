@@ -45,6 +45,8 @@ To retrieve data from the graph:
     })
 ```
 
+NOTE: QCypher uses Cypher query parameters.  For more information see:  [Neo4j Cypher Parameters](http://docs.neo4j.org/chunked/stable/cypher-parameters.html)
+
 ![image](./images/student_graph_db.png)
 
 ### Handling query errors
