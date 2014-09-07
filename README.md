@@ -45,6 +45,23 @@ To retrieve data from the graph:
     })
 ```
 
+### Handling query errors
+The following query is syntactically invalid and will cause Neo4j to return an error containing an exception and stack trace. This is valuable in helping you determine the cause of your error.
+
+```javascript
+  qcypher.query('MERGE (n:QCypher name: "first") RETURN n', {})
+    .then(function(result) {
+      expect(false).toBeTrue(); // this should not happen
+      done();
+    })
+    .catch(function(error) {
+      expect(error.exception).toBeDefined();
+      done();
+    });
+```
+
+When qCypher detects a Neo4j error is rejects its promise allowing you to capture the results in a catch clause as shown above.
+
 View the jasmine-node tests for other examples.
 
 ![image](./images/student_graph_db.png)

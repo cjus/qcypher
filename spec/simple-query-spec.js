@@ -35,5 +35,20 @@ describe('#Simple Query Suite', function() {
         });
     });
   });
+
+  describe('Invalid query', function() {
+    it('should fail', function(done) {
+      qcypher.query('MERGE (n:QCypher name: "first") RETURN n', {})
+        .then(function(result) {
+          expect(false).toBeTrue(); // this should not happen
+          done();
+        })
+        .catch(function(error) {
+          expect(error.exception).toBeDefined();
+          done();
+        });
+    });
+  });
+
 });
 
