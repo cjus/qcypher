@@ -11,6 +11,8 @@ QCypher may be installed via NPM.
 
     $ npm install qcypher
 
+[![NPM Stats](https://nodei.co/npm/qcypher.png?downloads=true)](https://npmjs.org/package/qcypher)
+
 ## Using QCypher
 
 Using QCypher consists of requiring the module, initializing the module with the path to the graph database and issuing one or more query calls.
