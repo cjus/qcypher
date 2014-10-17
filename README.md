@@ -4,8 +4,8 @@ A [q/promise-based](http://documentup.com/kriskowal/q) pure JS library for worki
 
 QCypher uses the Neo4j REST endpoints to issue HTTP requests to the graph database.  Asynchronous queries return Q promises in order to support query chaining.
 
-The library itself aims to be the thinnest possible layer between NodeJS and Neo4j, while allowing that interface to remain dead simple. For more involved usages, QCypher has a set of batch query functions.  Use those functions when more than simple chaining is required.
-  
+The library itself aims to be the thinnest possible layer between NodeJS and Neo4j, while allowing that interface to remain dead simple. For more involved usages, QCypher has a set of transaction query functions.  Use those functions when more than simple chaining is required.
+
 ## Install via NPM
 QCypher may be installed via NPM.
 
@@ -99,6 +99,16 @@ Here we see clues to the cause of the problem. Note, that the information return
 ```
 
 View the jasmine-node tests for other examples.
+
+## Working with Transactions
+
+For more complex queries and usecases, QCypher supports transactions.
+
+Neo4j transaction support is outlined here: http://docs.neo4j.org/chunked/stable/rest-api-transactional.html 
+
+## Batch operations
+
+QCypher does NOT support batch operations as defined here: http://docs.neo4j.org/chunked/stable/rest-api-batch-ops.html
 
 ## Tests
 QCypher has a suite of tests in the `/spec` folder. In order to run the tests neo4j must be running and jasmine-node must be installed.
