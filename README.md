@@ -20,8 +20,9 @@ When querying a local database the qcypher.init() call is optional, but using it
 
 Queries are written in the [Cypher query language](http://www.neo4j.org/learn/cypher) to interact with the graph.
 
-```javascript
-  var qcypher = require('qcypher')
+```
+  var QCypher = require('qcypher')
+  	, qcypher = new QCypher()
     , q = require('q');
 
   qcypher.init('http://localhost:7474');
@@ -35,7 +36,7 @@ Queries are written in the [Cypher query language](http://www.neo4j.org/learn/cy
 
 To retrieve data from the graph:
 
-```javascript
+```
   qcypher.query("MATCH (s:Student {name:{student}.name}) RETURN s", {
     student: {
       name: "Scott Riggs"
@@ -51,22 +52,56 @@ NOTE: QCypher uses Cypher query parameters.  For more information see:  [Neo4j C
 
 ![image](./images/student_graph_db.png)
 
+### Error Handling
+
+All QCypher functions add a status object to the results it returns.
+
+```
+status: {
+  statusCode: '201',
+  httpCode: '201',
+  httpMessage: 'Created',
+  httpDescription: 'Resource created'
+}
+```
+
+```
+  qcypher.query('SERGE (n:Node name: "Test") RETURN n', {})
+    .then(function resolve(result) {
+    });
+
+```
+
 ### Handling query errors
 The following query is syntactically invalid and will cause Neo4j to return an error containing an exception and stack trace. This is valuable in helping you determine the cause of your error.
 
-```javascript
+```
   qcypher.query('MERGE (n:QCypher name: "first") RETURN n', {})
-    .then(function(result) {
+    .then(function resolve(result) {
       expect(false).toBeTrue(); // this should not happen
       done();
-    })
-    .catch(function(error) {
+    }, function reject(result) {
       expect(error.exception).toBeDefined();
       done();
     });
 ```
 
-When qCypher detects a Neo4j error is rejects its promise allowing you to capture the results in a catch clause as shown above.
+In the example above note that the Q.then handler accepts two functions, a resolve and reject function.  The functions are named in the example above for clarity.  Another way to write this is:
+
+```
+  function resolve(result) {
+      expect(false).toBeTrue(); // this should not happen
+      done();
+  }
+  function reject(result) {
+      expect(error.exception).toBeDefined();
+      done();
+  }
+  qcypher.query('MERGE (n:QCypher name: "first") RETURN n', {})
+    .then(resolve, reject);
+```
+
+When qCypher detects a Neo4j error is rejects its promise allowing you to capture the results in the reject handler as shown above.
 
 If you console log the error using `console.log('error', JSON.stringify(error));`  
 
@@ -100,15 +135,51 @@ Here we see clues to the cause of the problem. Note, that the information return
 
 View the jasmine-node tests for other examples.
 
-## Working with Transactions
+## Transactions
 
-For more complex queries and usecases, QCypher supports transactions.
+For more complex queries and use cases, QCypher supports transactions.
 
 Neo4j transaction support is outlined here: http://docs.neo4j.org/chunked/stable/rest-api-transactional.html 
 
-## Batch operations
+> Note: QCypher does NOT support batch operations as defined here: http://docs.neo4j.org/chunked/stable/rest-api-batch-ops.html  
 
-QCypher does NOT support batch operations as defined here: http://docs.neo4j.org/chunked/stable/rest-api-batch-ops.html
+Only transactions are supported.
+
+## Working with Transactions
+
+You can create a transaction using `transCreate` and execute one or more cypher statements using `transExecute`. If you recieve an error and wish to abort a transaction you can do so with `transRollback`.
+
+Open transactions time out after a fixed amount of time, determined by the Neo4j database.  If you're preforming a lengthy operation you can extend the life of an open transaction using `transResetTimeout`.
+
+Finally, once you're done with a transaction you can commit it using `transCommit`.
+
+```
+  var transobj = qcypher.transCreate();
+  var promise = qcypher.transExecute(transobj, [
+    {
+      "statement": "MERGE (n:TNode {id:1}) RETURN n;",
+      "parameters": {}
+    },
+    {
+      "statement": "MERGE (n:TNode {id:2}) RETURN n;",
+      "parameters": {}
+    },
+    {
+      "statement": "MERGE (n:TNode {id:3}) RETURN n;",
+      "parameters": {}
+    }
+  ]);
+
+  promise.then(
+    function resolve(result) {
+      // execute of three statments succeeded so let's commit the transaction
+      qcypher.transCommit(transobj);
+    },
+    function reject(result) {
+      // no need to call qcypher.transRollback() because transaction was rejected.
+    }
+  );
+```
 
 ## Tests
 QCypher has a suite of tests in the `/spec` folder. In order to run the tests neo4j must be running and jasmine-node must be installed.

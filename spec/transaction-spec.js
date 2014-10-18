@@ -11,15 +11,15 @@ describe('#Transaction Test', function() {
     it('should succeed', function(done) {
       qcypher.transExecute(transobj, [
         {
-          "statement": "CREATE (n:TNode {id:1}) RETURN n;",
+          "statement": "MERGE (n:TNode {id:1}) RETURN n;",
           "parameters": {}
         },
         {
-          "statement": "CREATE (n:TNode {id:2}) RETURN n;",
+          "statement": "MERGE (n:TNode {id:2}) RETURN n;",
           "parameters": {}
         },
         {
-          "statement": "CREATE (n:TNode {id:3}) RETURN n;",
+          "statement": "MERGE (n:TNode {id:3}) RETURN n;",
           "parameters": {}
         }
       ])
@@ -76,30 +76,42 @@ describe('#Transaction Test', function() {
 
   describe('Creating and committing a transaction', function() {
     it('should succeed', function(done) {
+      transobj = qcypher.transCreate();
       qcypher.transExecute(transobj, [
         {
-          "statement": "CREATE (n:TNode {id:1}) RETURN n;",
+          "statement": "MERGE (n:TNode {id:1}) RETURN n;",
           "parameters": {}
         },
         {
-          "statement": "CREATE (n:TNode {id:2}) RETURN n;",
+          "statement": "MERGE (n:TNode {id:2}) RETURN n;",
           "parameters": {}
         },
         {
-          "statement": "CREATE (n:TNode {id:3}) RETURN n;",
+          "statement": "MERGE (n:TNode {id:3}) RETURN n;",
           "parameters": {}
         }
       ])
-        .then(function() {
+        .then(function(result) {
           qcypher.transCommit(transobj)
             .then(function resolved(result) {
-
-              done();
+              qcypher.query('MATCH (n:TNode) RETURN COUNT(n);', {})
+                .then(function resolve(result) {
+                  expect(result.status.httpCode).toBe('200');
+                  expect(result.data[0][0]).toBe(3);
+                  qcypher.query('MATCH (n:TNode) DELETE n;', {})
+                    .then(function() {
+                      done();
+                    });
+                }, function reject(result) {
+                  // This should not happen
+                  expect(false).toBeTrue();
+                  done();
+                });
             }, function reject(result) {
               expect(result.status.httpCode).toBe('404');
               done();
             });
-        })
+        });
 
     });
   });
