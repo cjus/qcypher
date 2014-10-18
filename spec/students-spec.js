@@ -1,5 +1,6 @@
-var qcypher = require('../lib/index')
-  , q = require('q');
+var q = require('q')
+  , QCypher = require('../lib/index')
+  , qcypher = new QCypher();
 
 var model = [
   "CREATE",
@@ -24,11 +25,10 @@ describe('#Students Query Suite', function() {
   describe('Clear database', function() {
     it('should succeed', function(done) {
       qcypher.query('MATCH (n) OPTIONAL MATCH (n)-[r]-() DELETE n, r', {})
-        .then(function(result) {
+        .then(function resolved(result) {
           expect(result).toBeDefined();
           done();
-        })
-        .catch(function(result) {
+        }, function rejected(result) {
           console.log('result', result);
           done();
         });
@@ -43,13 +43,12 @@ describe('#Students Query Suite', function() {
           grade: 12
         }
       })
-        .then(function(result) {
+        .then(function resolved(result) {
           var data = result.data[0][0].data;
           expect(data.name).toBe('Scott Riggs');
           expect(data.grade).toBe(12);
           done();
-        })
-        .catch(function(result) {
+        }, function rejected(result) {
           console.log('result', result);
           done();
         });
@@ -64,13 +63,12 @@ describe('#Students Query Suite', function() {
           name: "Scott Riggs"
         }
       })
-        .then(function(result) {
+        .then(function resolved(result) {
           var data = result.data[0][0].data;
           expect(data.name).toBe('Scott Riggs');
           expect(data.grade).toBe(12);
           done();
-        })
-        .catch(function(result) {
+        }, function rejected(result) {
           console.log('result', result);
           done();
         });
@@ -83,10 +81,9 @@ describe('#Students Query Suite', function() {
       qcypher.query('MATCH (n) OPTIONAL MATCH (n)-[r]-() DELETE n, r', {})
         .then(function() {
           qcypher.query(model, {})
-            .then(function(result) {
+            .then(function resovled(result) {
               done();
-            })
-            .catch(function(result) {
+            }, function rejected(result) {
               console.log('result', result);
               done();
             });

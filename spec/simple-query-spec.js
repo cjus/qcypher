@@ -1,20 +1,20 @@
-var qcypher = require('../lib/index')
-  , q = require('q');
+var q = require('q')
+  , QCypher = require('../lib/index')
+  , qcypher = new QCypher();
 
 describe('#Simple Query Suite', function() {
   'use strict';
 
-  var graphDatabaseUrl = process.env.GRAPHENEDB_URL || 'http://localhost:7474';
+  var graphDatabaseUrl = 'http://localhost:7474';
   qcypher.init(graphDatabaseUrl);
 
   describe('Clear database', function() {
     it('should succeed', function(done) {
       qcypher.query('MATCH (n) OPTIONAL MATCH (n)-[r]-() DELETE n, r', {})
-        .then(function(result) {
+        .then(function resolved(result) {
           expect(result).toBeDefined();
           done();
-        })
-        .catch(function(result) {
+        }, function rejected(result){
           console.log('result', result);
           done();
         });
@@ -24,12 +24,11 @@ describe('#Simple Query Suite', function() {
   describe('Connect to neo4j', function() {
     it('create node should return node', function(done) {
       qcypher.query('MERGE (n:QCypher {name: "first"}) RETURN n', {})
-        .then(function(result) {
+        .then(function resolved(result) {
           var data = result.data[0][0].data;
           expect(data.name).toBe('first');
           done();
-        })
-        .catch(function(result) {
+        }, function rejected(result) {
           console.log('result', result);
           done();
         });
@@ -39,12 +38,11 @@ describe('#Simple Query Suite', function() {
   describe('Invalid query', function() {
     it('should fail', function(done) {
       qcypher.query('MERGE (n:QCypher name: "first") RETURN n', {})
-        .then(function(result) {
+        .then(function resolved(result) {
           expect(false).toBeTrue(); // this should not happen
           done();
-        })
-        .catch(function(error) {
-          expect(error.exception).toBeDefined();
+        }, function rejected(result) {
+          expect(result.status.httpCode).toBe('400');
           done();
         });
     });

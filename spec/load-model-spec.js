@@ -1,5 +1,6 @@
-var qcypher = require('../lib/index')
-  , q = require('q');
+var q = require('q')
+  , QCypher = require('../lib/index')
+  , qcypher = new QCypher();
 
 var model = ['CREATE',
   '(c1:Cue {text:"Under 20"}),',
@@ -54,11 +55,10 @@ describe('#load-model Suite', function() {
   describe('Clear database', function() {
     it('should succeed', function(done) {
       qcypher.query('MATCH (n) OPTIONAL MATCH (n)-[r]-() DELETE n, r', {})
-        .then(function(result) {
+        .then(function resolve(result) {
           expect(result).toBeDefined();
           done();
-        })
-        .catch(function(result) {
+        }, function rejected(result) {
           console.log('result', result);
           done();
         });
@@ -68,12 +68,11 @@ describe('#load-model Suite', function() {
   describe('Upload model', function() {
     it('should return node', function(done) {
       qcypher.query(model, {})
-        .then(function(result) {
+        .then(function resolve(result) {
           var data = result.data[0][0].data;
           expect(data.text).toBe('Under 20');
           done();
-        })
-        .catch(function(result) {
+        }, function rejected(result) {
           console.log('result', result);
           done();
         });
@@ -87,19 +86,17 @@ describe('#load-model Suite', function() {
           name: "noting"
         }
       })
-        .then(function(result) {
+        .then(function resolved(result) {
           expect(result.data[0][2]).toBe('ebe158e6-f79d-4501-8d53-ad107fb30496');
           expect(result.data.length).toBe(13);
           done();
-        })
-        .catch(function(result) {
+        }, function rejected(result) {
           console.log('result', result);
           expect('exception').toBe(false);
           done();
         });
     });
   });
-
 
 });
 
