@@ -20,6 +20,14 @@ When querying a local database the qcypher.init() call is optional, but using it
 
 Queries are written in the [Cypher query language](http://www.neo4j.org/learn/cypher) to interact with the graph.
 
+> Earlier versions of QCypher only allowed you to import and use the module. This meant that you could only use one Neo4j database at one time. You must now require qcypher which returns a constructor function, then you can create an instance for use as before.
+
+> var QCypher = require('qcypher')
+>  	, qcypher = new QCypher();
+>  	
+
+
+
 ```
   var QCypher = require('qcypher')
   	, qcypher = new QCypher()
@@ -48,7 +56,7 @@ To retrieve data from the graph:
     })
 ```
 
-NOTE: QCypher uses Cypher query parameters.  For more information see:  [Neo4j Cypher Parameters](http://docs.neo4j.org/chunked/stable/cypher-parameters.html)
+**NOTE**: QCypher uses Cypher query parameters.  For more information see:  [Neo4j Cypher Parameters](http://docs.neo4j.org/chunked/stable/cypher-parameters.html)
 
 ![image](./images/student_graph_db.png)
 
@@ -65,12 +73,36 @@ status: {
 }
 ```
 
+The following common errors are tracked:
+
+httpCode    |   httpMessage             |   httpDescription
+----------- |   ----------------------  |   ------------------------------------
+200         |   OK                      |   Request succeeded without error
+201         |   Created                 |   Resource created
+400         |   Bad Request             |   Request is invalid, missing parameters?
+401         |   Unauthorized            |   User isn't authorized to access this resource
+402         |   Request Failed          |   Parameters are valid but request still failed
+404         |   Not Found               |   The requested resource was not found on the server
+429         |   Too Many Request        |   Too many requests issue within a period
+500         |   Server Error            |   An error occurred on the server
+501         |   Method Not Implemented  |   The requested method / resource isn't implemented on the server
+503         |   Service Unavailable     |   The server is currently unable to handle the request due to a temporary overloading or maintenance of the server. The implication is that this is a temporary condition which will be alleviated after some delay
+
+Look at the result’s status object for request status:
+
+**IMPORTANT**:	`httpCode` less than 300 is returned when the Q promise is resolved, 300 and greater are treated as errors and returned via reject.
+
 ```
   qcypher.query('SERGE (n:Node name: "Test") RETURN n', {})
     .then(function resolve(result) {
+    	console.log(‘Success’, result.status.httpCode);
+    }, function reject(result) {
+        console.log(‘Failure’, result.status.httpCode);
     });
-
 ```
+
+In the example above `SERGE` is an invalid Cypher command (should have been `MERGE`) and so the example returns a 400 error indicating that we sent a `Bad Request`.
+
 
 ### Handling query errors
 The following query is syntactically invalid and will cause Neo4j to return an error containing an exception and stack trace. This is valuable in helping you determine the cause of your error.
@@ -101,9 +133,9 @@ In the example above note that the Q.then handler accepts two functions, a resol
     .then(resolve, reject);
 ```
 
-When qCypher detects a Neo4j error is rejects its promise allowing you to capture the results in the reject handler as shown above.
+When qCypher detects a Neo4j error it rejects its promise allowing you to capture the results in the reject handler as shown above.
 
-If you console log the error using `console.log('error', JSON.stringify(error));`  
+You can console log the error using `console.log('error', JSON.stringify(error));`  
 
 Here we see clues to the cause of the problem. Note, that the information returned in the `message` is the same returned in the Cypher web browser console.
 
@@ -133,7 +165,7 @@ Here we see clues to the cause of the problem. Note, that the information return
 }
 ```
 
-View the jasmine-node tests for other examples.
+View the tests in the project’s spec folder for other examples.
 
 ## Transactions
 
@@ -192,4 +224,8 @@ Run the tests using:
 `Warning`: these tests will flush your local database!
 
     $ npm test
+    
+You can run an individual test using:
+
+    $ jasmine-node spec/transaction-spec.js —-verbose
 
