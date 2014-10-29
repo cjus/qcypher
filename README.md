@@ -6,12 +6,12 @@ QCypher uses the Neo4j REST endpoints to issue HTTP requests to the graph databa
 
 The library itself aims to be the thinnest possible layer between NodeJS and Neo4j, while allowing that interface to remain dead simple. For more involved usages, QCypher has a set of transaction query functions.  Use those functions when more than simple chaining is required.
 
+[![NPM Stats](https://nodei.co/npm/qcypher.png?downloads=true)](https://npmjs.org/package/qcypher)
+
 ## Install via NPM
 QCypher may be installed via NPM.
 
     $ npm install qcypher
-
-[![NPM Stats](https://nodei.co/npm/qcypher.png?downloads=true)](https://npmjs.org/package/qcypher)
 
 ## Using QCypher
 
