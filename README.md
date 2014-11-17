@@ -204,7 +204,7 @@ Finally, once you're done with a transaction you can commit it using `transCommi
 
   promise.then(
     function resolve(result) {
-      // execute of three statments succeeded so let's commit the transaction
+      // execute of three statements succeeded so let's commit the transaction
       qcypher.transCommit(transobj);
     },
     function reject(result) {
@@ -212,6 +212,57 @@ Finally, once you're done with a transaction you can commit it using `transCommi
     }
   );
 ```
+
+## Query statement builder
+
+When working with queries it's important to build templates that can have parameters applied to them.  This allows the Neo4j engine to cache queries.  
+
+An example of this can be seen in the following statements. The student's name is applied to the query string as {student}.name
+	
+```
+  qcypher.query("MATCH (s:Student {name:{student}.name}) RETURN s", {
+    student: {
+      name: "Scott Riggs"
+    }
+  })
+```
+
+This works really well but we can't use this method to change other parts of the query. For example, consider this:
+
+```
+var queryTemplate = 'MATCH (u:User {userID: {params}.userID}), (e:Events {name: "Events"}) ' +
+    'CREATE ' +
+        '(u)-[:SIGNIN_EVENT {ts: {params}.ts}]->(e) ' +
+    'RETURN true;';
+```
+
+We can use that query template to apply the userID and event timestamp.  However we can't generalize the query by replacing the SIGNIN_EVENT relationship. That is, we can't use: `{params}.eventType`.
+	
+This is where the `queryStatementBuilder` function becomes useful.  Let's change the last example a bit:
+
+```
+  var queryTemplate = 'MATCH (u:User {userID: {params}.userID}), (e:Events {name: "Events"}) ' +
+        'CREATE ' +
+        '(u)-[:<%=eventType%> {ts: {params}.ts}]->(e) ' +
+        'RETURN true;';
+```
+
+By naming a template parameters using `<%=` preceding an identifier and following with a closing `%>` we can describe parameters that apply to templates.
+
+Here's the full example:
+
+```
+  var queryTemplate = 'MATCH (u:User {userID: {params}.userID}), (e:Events {name: "Events"}) ' +
+        'CREATE ' +
+        '(u)-[:<%=eventType%> {ts: {params}.ts}]->(e) ' +
+        'RETURN true;';
+  var query = qcypher.queryStatementBuilder(queryTemplate, {
+          eventType: 'JOINED_EVENT'
+  });
+```
+
+The resulting query variable can then be used with `query` and `transXXX` calls.
+
 
 ## Tests
 QCypher has a suite of tests in the `/spec` folder. In order to run the tests neo4j must be running and jasmine-node must be installed.
