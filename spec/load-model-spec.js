@@ -46,7 +46,7 @@ var query = [
   'RETURN DISTINCT cue.text, ID(cue), background.id, sticker.id'
 ].join(' \n');
 
-describe('#load-model Suite', function() {
+describe('load-model Suite', function() {
   'use strict';
 
   var graphDatabaseUrl = process.env.GRAPHENEDB_URL || 'http://localhost:7474';
@@ -59,7 +59,6 @@ describe('#load-model Suite', function() {
           expect(result).toBeDefined();
           done();
         }, function rejected(result) {
-          console.log('result', result);
           done();
         });
     });
@@ -73,7 +72,6 @@ describe('#load-model Suite', function() {
           expect(data.text).toBe('Under 20');
           done();
         }, function rejected(result) {
-          console.log('result', result);
           done();
         });
     });
@@ -91,7 +89,6 @@ describe('#load-model Suite', function() {
           expect(result.data.length).toBe(13);
           done();
         }, function rejected(result) {
-          console.log('result', result);
           expect('exception').toBe(false);
           done();
         });

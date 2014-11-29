@@ -1,6 +1,6 @@
 var q = require('q')
 
-describe('#HTTP 400 Test', function() {
+describe('HTTP 400 Test', function() {
   'use strict';
   describe('reachable database with bad query', function() {
     var QCypher = require('../lib/index')

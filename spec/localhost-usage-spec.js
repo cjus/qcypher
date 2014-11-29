@@ -2,7 +2,7 @@ var q = require('q')
   , QCypher = require('../lib/index')
   , qcypher = new QCypher();
 
-describe('#Localhost Test', function() {
+describe('Localhost Test', function() {
   'use strict';
 
   describe('Not initializing qcypher', function() {
@@ -12,7 +12,6 @@ describe('#Localhost Test', function() {
           expect(result).toBeDefined();
           done();
         }, function rejected(result) {
-          console.log('result', result);
           done();
         });
       qcypher.query('MERGE (n:QCypher {name: "first"}) RETURN n', {})
@@ -21,7 +20,6 @@ describe('#Localhost Test', function() {
           expect(data.name).toBe('first');
           done();
         }, function rejected(result) {
-          console.log('result', result);
           done();
         });
     });

@@ -1,6 +1,6 @@
 var q = require('q')
 
-describe('#HTTP 404 Test', function() {
+describe('HTTP 404 Test', function() {
   'use strict';
   describe('reachable database with REST path', function() {
     var QCypher = require('../lib/index')

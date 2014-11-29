@@ -1,6 +1,6 @@
 var q = require('q')
 
-describe('#HTTP 500 Test', function() {
+describe('HTTP 500 Test', function() {
   'use strict';
 
   describe('unreachable database', function() {

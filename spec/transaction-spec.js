@@ -2,7 +2,7 @@ var q = require('q')
   , QCypher = require('../lib/index')
   , qcypher = new QCypher();
 
-describe('#Transaction Test', function() {
+describe('Transaction Test', function() {
   'use strict';
   var transobj = qcypher.transCreate()
     , transactionExpire;
@@ -11,16 +11,22 @@ describe('#Transaction Test', function() {
     it('should succeed', function(done) {
       qcypher.transExecute(transobj, [
         {
-          "statement": "MERGE (n:TNode {id:1}) RETURN n;",
-          "parameters": {}
+          "statement": "MERGE (n:TNode {id:{value}}) RETURN n;",
+          "parameters": {
+            "value": 1
+          }
         },
         {
-          "statement": "MERGE (n:TNode {id:2}) RETURN n;",
-          "parameters": {}
+          "statement": "MERGE (n:TNode {id:{value}}) RETURN n;",
+          "parameters": {
+            "value": 2
+          }
         },
         {
-          "statement": "MERGE (n:TNode {id:3}) RETURN n;",
-          "parameters": {}
+          "statement": "MERGE (n:TNode {id:{value}}) RETURN n;",
+          "parameters": {
+            "value": 3
+          }
         }
       ])
         .then(function(result) {
@@ -79,16 +85,22 @@ describe('#Transaction Test', function() {
       transobj = qcypher.transCreate();
       qcypher.transExecute(transobj, [
         {
-          "statement": "MERGE (n:TNode {id:1}) RETURN n;",
-          "parameters": {}
+          "statement": "MERGE (n:TNode {id:{value}}) RETURN n;",
+          "parameters": {
+            "value": 1
+          }
         },
         {
-          "statement": "MERGE (n:TNode {id:2}) RETURN n;",
-          "parameters": {}
+          "statement": "MERGE (n:TNode {id:{value}}) RETURN n;",
+          "parameters": {
+            "value": 2
+          }
         },
         {
-          "statement": "MERGE (n:TNode {id:3}) RETURN n;",
-          "parameters": {}
+          "statement": "MERGE (n:TNode {id:{value}}) RETURN n;",
+          "parameters": {
+            "value": 3
+          }
         }
       ])
         .then(function(result) {

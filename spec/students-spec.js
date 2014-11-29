@@ -16,7 +16,7 @@ var model = [
   "RETURN t1"
 ].join(' \n');
 
-describe('#Students Query Suite', function() {
+describe('Students Query Suite', function() {
   'use strict';
 
   var graphDatabaseUrl = process.env.GRAPHENEDB_URL || 'http://localhost:7474';
@@ -29,7 +29,6 @@ describe('#Students Query Suite', function() {
           expect(result).toBeDefined();
           done();
         }, function rejected(result) {
-          console.log('result', result);
           done();
         });
     });
@@ -49,7 +48,6 @@ describe('#Students Query Suite', function() {
           expect(data.grade).toBe(12);
           done();
         }, function rejected(result) {
-          console.log('result', result);
           done();
         });
     });
@@ -69,7 +67,6 @@ describe('#Students Query Suite', function() {
           expect(data.grade).toBe(12);
           done();
         }, function rejected(result) {
-          console.log('result', result);
           done();
         });
     });
@@ -84,7 +81,6 @@ describe('#Students Query Suite', function() {
             .then(function resovled(result) {
               done();
             }, function rejected(result) {
-              console.log('result', result);
               done();
             });
         });

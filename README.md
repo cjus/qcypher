@@ -27,7 +27,6 @@ Queries are written in the [Cypher query language](http://www.neo4j.org/learn/cy
 >  	
 
 
-
 ```
   var QCypher = require('qcypher')
   	, qcypher = new QCypher()
@@ -165,6 +164,34 @@ Here we see clues to the cause of the problem. Note, that the information return
 }
 ```
 
+#### Handling single return values
+
+When you specify a query which returns a single value, object or row of data, you can use the `getSimpleData` helper function.  It accepts a result object and returns an object containing the value returned from the query. 
+
+For example: 
+
+This query returns a single value `id`
+	
+```
+MATCH (u:User {id: "0e87e623-f358-4e00-93ff-cc77dfd99b48"}) RETURN u.id;
+```
+
+This query also returns a single value, it just happens to be a single object"
+
+```
+MATCH (u:User {id: "0e87e623-f358-4e00-93ff-cc77dfd99b48"}) 
+RETURN {"id: u.id, name": u.name, age: u.age};
+```
+
+The `getSimpleData` can be used with each of the example above.  And it will work with this next example.
+
+```
+MATCH (u:User {id: "0e87e623-f358-4e00-93ff-cc77dfd99b48"}) 
+RETURN u;
+```
+
+However, it shouldn't be used when there are multiple rows returned by Neo4j Cypher.
+
 View the tests in the project’s spec folder for other examples.
 
 ## Transactions
@@ -186,32 +213,53 @@ Open transactions time out after a fixed amount of time, determined by the Neo4j
 Finally, once you're done with a transaction you can commit it using `transCommit`.
 
 ```
-  var transobj = qcypher.transCreate();
-  var promise = qcypher.transExecute(transobj, [
-    {
-      "statement": "MERGE (n:TNode {id:1}) RETURN n;",
-      "parameters": {}
-    },
-    {
-      "statement": "MERGE (n:TNode {id:2}) RETURN n;",
-      "parameters": {}
-    },
-    {
-      "statement": "MERGE (n:TNode {id:3}) RETURN n;",
-      "parameters": {}
+var transobj = qcypher.transCreate();
+var query = "MERGE (n:TNode {id:{value}}) RETURN n;";
+var promise = qcypher.transExecute(transobj, [
+  {
+    "statement": query,
+    "parameters": {
+      "value": 1
     }
-  ]);
+  },
+  {
+    "statement": query,
+    "parameters": {
+      "value": 2
+    }
+  },
+  {
+    "statement": query,
+    "parameters": {
+      "value": 3
+    }
+  }
+]);
 
-  promise.then(
-    function resolve(result) {
-      // execute of three statements succeeded so let's commit the transaction
+promise.then(function resolve(result) {
+    if (result.errors.length > 0) {
+      qcypher.transRollback();
+    } else {
       qcypher.transCommit(transobj);
-    },
-    function reject(result) {
-      // no need to call qcypher.transRollback() because transaction was rejected.
     }
-  );
+  },
+  function reject(result) {
+    // no need to call qcypher.transRollback() because transaction was rejected.
+  }
+);
 ```
+
+### Robust handling
+
+When working with transactions we're sending an array of statements to be processed as a single transaction.  So it's important to examine the results object for errors.  That is, one or more of the statements you're sending for execution may have failed.
+
+The results.errors member variable is an array which may contain details on one or more failures. If empty then there are no errors.
+
+Often in transaction based processing if one statement fails we typically want to rollback the entire transaction.  Because the exact action you take based on a transaction is application dependent (that is, up to you!), QCypher doesn't automatically do this for you.  You're expected to analyze the results of a transaction exception and decide whether you want to commit or rollback. 
+
+Another reason why QCypher doesn't automatically commit a transaction is because it doesn't know when you're done with it.  You can, for example, keep a transaction open and perform multiple `cypher.transExecute` over a period of time. 
+
+However, QCypher has a helper function which will rollback or commit based on whether a transaction is completely successful.  `qcypher.transSingleExecute` will execute a single transaction and resolve or reject based on whether there were any errors.  It will also commit or rollback automatically.  It's only useful when you want to execute a single batch of statements and expect to rollback if any statement in the transaction fails.
 
 ## Query statement builder
 

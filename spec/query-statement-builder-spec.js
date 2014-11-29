@@ -2,7 +2,7 @@ var q = require('q')
   , QCypher = require('../lib/index')
   , qcypher = new QCypher();
 
-describe('#queryStatementBuilder Suite', function() {
+describe('queryStatementBuilder Suite', function() {
   'use strict';
 
   describe('Query', function() {
